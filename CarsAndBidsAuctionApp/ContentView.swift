@@ -1,9 +1,6 @@
-//
 //  ContentView.swift
 //  CarsAndBidsAuctionApp
-//
-//  Created by George Garcia on 5/21/25.
-//
+//  Created by George Garcia on 5/21/25
 
 import SwiftUI
 
@@ -13,7 +10,7 @@ struct ContentView: View {
             Image(systemName: "globe")
                 .imageScale(.large)
                 .foregroundStyle(.tint)
-            Text("Hello, world!")
+            Text("This is a test")
         }
         .padding()
     }
