@@ -1,9 +1,6 @@
-//
 //  CarsAndBidsAuctionAppApp.swift
 //  CarsAndBidsAuctionApp
-//
 //  Created by George Garcia on 5/21/25.
-//
 
 import SwiftUI
 
