@@ -5,14 +5,15 @@
 import SwiftUI
 
 struct ContentView: View {
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("This is a test")
+
+        NavigationView {
+            List {
+                Text("Auction Item 1")
+                Text("Auction Item 2")
+            }.navigationTitle("Auctions")
         }
-        .padding()
     }
 }
 
