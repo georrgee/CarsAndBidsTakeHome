@@ -15,18 +15,15 @@ class AuctionService: ObservableObject {
 
     // MARK: - Methods
     /* @description: fetches all auctions */
+    
     func fetchAuctions() async throws -> [Auction] {
         
         let url = URL(string: "https://sbffr.carsandbids.com/api/auction-groups/myvj0bjns2k55kvwuuukalb1?populate[0]=auctions.main_image")!
         
         let (data, _) = try await URLSession.shared.data(from: url)
-        
-        print("Raw data: \(String(data: data, encoding: .utf8) ?? "No data")")
-        
+                
         do {
-            
             let response = try JSONDecoder().decode(AuctionGroupsResponse.self, from: data)
-            print("Decoded auctions count: \(response.data.auctions.count)")
             return response.data.auctions
             
         } catch {
@@ -34,7 +31,6 @@ class AuctionService: ObservableObject {
             throw error
         }
     }
-    
     
     /** @description: fetches an auction based on the id */
     func fetchAuctionById(auctionId: String) async throws -> Auction  {

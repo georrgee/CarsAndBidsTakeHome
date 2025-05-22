@@ -18,9 +18,7 @@ class AuctionViewModel: ObservableObject {
         
         do {
             let fetchedAuctions = try await service.fetchAuctions()
-            print("Fetched auctions: \(fetchedAuctions.map { $0.title })")
             self.auctions = fetchedAuctions
-            print("Updated auctions count in view model: \(self.auctions.count)")
             self.isLoading = false
         } catch {
             print("Fetch error: \(error)")

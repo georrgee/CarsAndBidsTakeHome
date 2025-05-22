@@ -6,48 +6,82 @@ import SwiftUI
 import Foundation
 
 struct ContentView: View {
-    
+
     @StateObject private var auctionViewModel = AuctionViewModel()
-    
+
     var body: some View {
 
-        NavigationView {
+        NavigationStack {
+            
             VStack(spacing: 0) {
                 HStack {
                     Text("cars")
                         .font(.custom("Rubik-Medium", size: 28))
-                        .foregroundStyle(.black)
                     + Text("&")
                         .font(.custom("Rubik-Medium", size: 30))
                         .foregroundStyle(.green)
                     + Text("bids")
                        .font(.custom("Rubik-Medium", size: 28))
-                       .foregroundStyle(.black)
-
+                    
                     Spacer()
                 }.padding()
-                
+
                 VStack(alignment: .leading) {
-                    
+
                     Text("Auctions")
                         .font(.custom("Rubik-Medium", size: 18))
                         .padding(.leading)
 
-                    List {
-                        ForEach(auctionViewModel.auctions) { auction in
-                            AuctionItem(auction: auction)
-                        }
-                    }
-                    .onAppear {
-                        Task {
-                            await auctionViewModel.fetchAuctions()
-                        }
+                    if auctionViewModel.isLoading {
+                        
+                        VStack {
+                            Spacer()
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                            Spacer()
+                        }.frame(maxWidth: .infinity)
+                        
+                    } else if let error = auctionViewModel.errorMessage {
+                        
+                        VStack {
+                            Spacer()
+                            Text("Error: \(error.localizedDescription)")
+                                .foregroundColor(.red)
+                                .padding()
+                            Spacer()
+                        }.frame(maxWidth: .infinity)
+                        
+                        
+                    } else if auctionViewModel.auctions.isEmpty {
+                        
+                        VStack {
+                            Spacer()
+                            Text("No auctions available.")
+                                .foregroundColor(.gray)
+                                .padding()
+                            Spacer()
+                        }.frame(maxWidth: .infinity)
                     }
                     
-                    .listStyle(PlainListStyle())
-                    
-                }.frame(maxWidth: .infinity, alignment: .leading)
+                    else {
+                        List {
+                            ForEach(auctionViewModel.auctions) { auction in
+                                AuctionRow(auction: auction)
+                                    .listRowInsets(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
+                                    .listRowSeparator(.hidden)
+                            }
+                        }
+                        .listStyle(PlainListStyle())
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .onAppear {
+                    Task {
+                        await auctionViewModel.fetchAuctions()
+                    }
+                }
             }
+            .navigationBarHidden(true)
         }
     }
 }
