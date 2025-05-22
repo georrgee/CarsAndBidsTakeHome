@@ -24,4 +24,10 @@ struct Formatters {
         
         return dateString
     }
+
+    static func parseDate(_ dateString: String) -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        return dateFormatter.date(from: dateString)
+    }
 }
