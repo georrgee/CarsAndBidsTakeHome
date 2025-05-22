@@ -28,17 +28,25 @@ struct ContentView: View {
                 }.padding()
                 
                 VStack(alignment: .leading) {
+                    
                     Text("Auctions")
                         .font(.custom("Rubik-Medium", size: 18))
                         .padding(.leading)
 
                     List {
-                        Text("Auction Item 1")
-                        Text("Auction Item 2")
+                        ForEach(auctionViewModel.auctions) { auction in
+                            AuctionItem(auction: auction)
+                        }
                     }
+                    .onAppear {
+                        Task {
+                            await auctionViewModel.fetchAuctions()
+                        }
+                    }
+                    
                     .listStyle(PlainListStyle())
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                }.frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }

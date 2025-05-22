@@ -4,6 +4,7 @@
 
 import Foundation
 
+@MainActor
 class AuctionViewModel: ObservableObject {
     
     @Published var auctions: [Auction] = []
@@ -13,26 +14,18 @@ class AuctionViewModel: ObservableObject {
     private let service = AuctionService.shared
     
     func fetchAuctions() async {
-        
         isLoading = true
         
-        Task {
-            do {
-                let fetchedAuctions = try await service.fetchAuctions()
-                
-                await MainActor.run {
-                    self.auctions = fetchedAuctions
-                    self.isLoading = false
-                }
-                
-            } catch {
-                
-                await MainActor.run {
-//                    self.errorMessage = "Failed to load auctions: \(error.localizedDescription)" as! any Error
-                    self.errorMessage = errorMessage
-                    self.isLoading    = false
-                }
-            }
+        do {
+            let fetchedAuctions = try await service.fetchAuctions()
+            print("Fetched auctions: \(fetchedAuctions.map { $0.title })")
+            self.auctions = fetchedAuctions
+            print("Updated auctions count in view model: \(self.auctions.count)")
+            self.isLoading = false
+        } catch {
+            print("Fetch error: \(error)")
+            self.errorMessage = error
+            self.isLoading = false
         }
     }
 }

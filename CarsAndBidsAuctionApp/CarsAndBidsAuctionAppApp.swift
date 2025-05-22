@@ -9,6 +9,7 @@ struct CarsAndBidsAuctionAppApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(AuctionService.shared)
         }
     }
 }
