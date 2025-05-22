@@ -11,21 +11,33 @@ class AuctionService: ObservableObject {
     @Published var auctions: [Auction] = []
     
     // MARK: - Variables
+    private var cachedAuctions: [Auction] = []
+    private var lastFetchTime: Date?
+    private let cacheExpirationInterval: TimeInterval = 300  
     static let shared = AuctionService()
 
     // MARK: - Methods
     /* @description: fetches all auctions */
-    
-    func fetchAuctions() async throws -> [Auction] {
-        
-        let url = URL(string: "https://sbffr.carsandbids.com/api/auction-groups/myvj0bjns2k55kvwuuukalb1?populate[0]=auctions.main_image")!
-        
+    func fetchAuctions(forceRefresh: Bool = false) async throws -> [Auction] {
+
+        if !forceRefresh, !cachedAuctions.isEmpty, let lastFetch = lastFetchTime,
+            Date().timeIntervalSince(lastFetch) < cacheExpirationInterval
+        {
+            return cachedAuctions
+        }
+
+        let url = URL(
+            string:
+                "https://sbffr.carsandbids.com/api/auction-groups/myvj0bjns2k55kvwuuukalb1?populate[0]=auctions.main_image"
+        )!
+
         let (data, _) = try await URLSession.shared.data(from: url)
-                
+
         do {
             let response = try JSONDecoder().decode(AuctionGroupsResponse.self, from: data)
+            self.cachedAuctions = response.data.auctions
+            self.lastFetchTime = Date()
             return response.data.auctions
-            
         } catch {
             print("Decoding error: \(error)")
             throw error
@@ -33,17 +45,30 @@ class AuctionService: ObservableObject {
     }
     
     /** @description: fetches an auction based on the id */
-    func fetchAuctionById(auctionId: String) async throws -> Auction  {
-        
-        let url = URL(string: "https://sbffr.carsandbids.com/api/auctions?filters[auction_id][$eq]=\(auctionId)")!
-        
+    func fetchAuctionById(auctionId: String) async throws -> Auction {
+
+        if let cachedAuction = cachedAuctions.first(where: { $0.auctionId == auctionId }) {
+            print("Using cached auction data for ID: \(auctionId)")
+            return cachedAuction
+        }
+
+        let url = URL(
+            string:
+                "https://sbffr.carsandbids.com/api/auctions?filters[auction_id][$eq]=\(auctionId)")!
+
         let (data, _) = try await URLSession.shared.data(from: url)
         let response = try JSONDecoder().decode(AuctionResponse.self, from: data)
-        
+
         guard let auction = response.data.first else {
             throw URLError(.badServerResponse)
         }
-        
+
         return auction
+    }
+
+    /** @description: clears the cache */
+    func clearCache() {
+        cachedAuctions = []
+        lastFetchTime = nil
     }
 }

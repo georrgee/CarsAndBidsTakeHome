@@ -8,6 +8,10 @@ struct AuctionDetailView: View {
   @State private var isLoading = true
   let auction: Auction
 
+  private var auctionURL: URL? {
+    URL(string: auction.auctionUrl)
+  }
+
   var body: some View {
 
     ZStack {

@@ -16,17 +16,25 @@ struct WebView: UIViewRepresentable {
         configuration.allowsInlineMediaPlayback = true
         configuration.mediaTypesRequiringUserActionForPlayback = []
 
+        configuration.websiteDataStore = WKWebsiteDataStore.default()
+
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
         webView.allowsBackForwardNavigationGestures = true
-        webView.load(URLRequest(url: url))
+
+        var request = URLRequest(url: url)
+        request.cachePolicy = .returnCacheDataElseLoad
+
+        webView.load(request)
         return webView
     }
     
     func updateUIView(_ webView: WKWebView, context: Context) {
         if webView.url != url {
-          webView.load(URLRequest(url: url))
-        }
+            var request = URLRequest(url: url)
+            request.cachePolicy = .returnCacheDataElseLoad
+            webView.load(request)       
+         }
      }
     
     func makeCoordinator() -> Coordinator {

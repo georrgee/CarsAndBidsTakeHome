@@ -13,6 +13,8 @@ class AuctionViewModel: ObservableObject {
     @Published var isLoading: Bool    = false
     @Published var searchText: String = ""
     @Published var isSearching: Bool  = false
+    @Published var isRefreshing: Bool = false
+
     
     @Published var errorMessage: Error?
     @Published var searchDate: Date?
@@ -27,18 +29,25 @@ class AuctionViewModel: ObservableObject {
 
     private let service = AuctionService.shared
     
-    func fetchAuctions() async {
-        isLoading = true
-        
+    func fetchAuctions(forceRefresh: Bool = false) async {
+
+        if forceRefresh {
+            isRefreshing = true
+        } else {
+            isLoading = true
+        }
+
         do {
-            let fetchedAuctions = try await service.fetchAuctions()
+            let fetchedAuctions = try await service.fetchAuctions(forceRefresh: forceRefresh)
             self.auctions = fetchedAuctions
             self.filteredAuctions = fetchedAuctions
             self.isLoading = false
+            self.isRefreshing = false
         } catch {
             print("Fetch error: \(error)")
             self.errorMessage = error
             self.isLoading = false
+            self.isRefreshing = false
         }
     }
 

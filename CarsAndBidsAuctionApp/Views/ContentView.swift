@@ -27,7 +27,6 @@ struct ContentView: View {
                     Spacer()
                 }.padding()
 
-                // Search Component
                 VStack(spacing: 10) {
                     HStack {
                         HStack {
@@ -187,6 +186,9 @@ struct ContentView: View {
                             }
                         }
                         .listStyle(PlainListStyle())
+                        .refreshable { 
+                            await auctionViewModel.fetchAuctions(forceRefresh: true)
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
