@@ -40,7 +40,7 @@ struct Formatters {
         return displayFormatter.string(from: date)
     }
 
-    /// Parses an ISO 8601 date string into a Date object, used for data processing an filtering logic
+    /// Parses an ISO 8601 date string into a Date object, used for data processing and filtering logic
     ///
     /// - Parameter dateString: The ISO 8601 formatted date string to parse
     /// - Returns: A Date object if parsing succeeds, or nil if the string cannot be parsed

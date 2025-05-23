@@ -25,10 +25,15 @@ struct AuctionRow: View {
             .opacity(0)
             
             VStack(alignment: .leading, spacing: 8) {
+                
                 ZStack(alignment: .bottomLeading) {
+                    
                     if let mainImage = auction.mainImage {
+                        
                         AsyncImage(url: URL(string: mainImage.formats.medium.url)) { phase in
+                            
                             switch phase {
+                                
                             case .empty:
                                 Rectangle()
                                     .fill(Color.gray.opacity(0.3))
@@ -36,10 +41,12 @@ struct AuctionRow: View {
                                         Image(systemName: "photo")
                                             .foregroundColor(.gray)
                                     )
+                                
                             case .success(let image):
                                 image
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
+                                
                             case .failure:
                                 Rectangle()
                                     .fill(Color.gray.opacity(0.3))
@@ -47,6 +54,7 @@ struct AuctionRow: View {
                                         Image(systemName: "photo")
                                             .foregroundColor(.gray)
                                     )
+                                
                             @unknown default:
                                 Rectangle()
                                     .fill(Color.pink.opacity(0.3))
@@ -55,6 +63,7 @@ struct AuctionRow: View {
                         .aspectRatio(1.5, contentMode: .fit)
                         .cornerRadius(8)
                         .clipped()
+                        
                     } else {
                         Rectangle()
                             .fill(Color.blue.opacity(0.3))

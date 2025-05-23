@@ -6,6 +6,8 @@ import SwiftUI
 
 /// A view modifier that customizes the appearance of the navigation bar.
 struct NavigationBarModifier: ViewModifier {
+    
+    // MARK: - Properies
     var tintColor: UIColor
 
     init(tintColor: UIColor) {
@@ -28,7 +30,8 @@ struct NavigationBarModifier: ViewModifier {
         UINavigationBar.appearance().compactAppearance = appearance
         UINavigationBar.appearance().tintColor = tintColor
     }
-
+    
+    // MARK: - Functions
     func body(content: Content) -> some View {
         content
     }

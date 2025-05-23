@@ -6,10 +6,11 @@ import SwiftUI
 
 /// This view presents the auction details by loading the auction's web page in a webview
 struct AuctionDetailView: View {
-
+    
+  // MARK: - Properties
   @State private var isLoading = true
   let auction: Auction
-
+    
   private var auctionURL: URL? {
     URL(string: auction.auctionUrl)
   }
@@ -17,7 +18,6 @@ struct AuctionDetailView: View {
   var body: some View {
 
     ZStack {
-        
       if isLoading {
         ProgressView()
           .progressViewStyle(CircularProgressViewStyle())

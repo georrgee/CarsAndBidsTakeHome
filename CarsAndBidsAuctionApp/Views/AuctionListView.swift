@@ -8,7 +8,8 @@ import Foundation
 /// A view that displays a list of auctions with search and filtering capabilities.
 /// This view serves as the main screen of the application, showing a list of auctions
 struct AuctionListView: View {
-
+    
+    // MARK: - Properties
     @StateObject private var auctionViewModel = AuctionViewModel()
     @State private var showDatePicker         = false
 
@@ -16,8 +17,10 @@ struct AuctionListView: View {
 
         NavigationStack {
             
-            VStack(spacing: 0) {
+            VStack {
+                
                 HStack {
+                    
                     Text("cars")
                         .font(.custom("Rubik-Medium", size: 28))
                     + Text("&")
@@ -30,8 +33,11 @@ struct AuctionListView: View {
                 }.padding()
 
                 VStack(spacing: 10) {
+                    
                     HStack {
+                        
                         HStack {
+                            
                             Image(systemName: "magnifyingglass")
                                 .foregroundStyle(.gray)
 

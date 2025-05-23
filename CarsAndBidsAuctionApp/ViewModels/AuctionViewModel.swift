@@ -8,6 +8,7 @@ import Foundation
 @MainActor
 class AuctionViewModel: ObservableObject {
     
+    // MARK: - Properties
     @Published var auctions: [Auction]         = []
     @Published var filteredAuctions: [Auction] = []
     
@@ -19,20 +20,21 @@ class AuctionViewModel: ObservableObject {
     @Published var errorMessage: Error?
     @Published var searchDate: Date?
     
-    @Published var dateFilterType: DateFilterType = .created
-    @Published var favoriteAuctionIds: Set<String> = Set(
-        UserDefaults.standard.stringArray(forKey: "favoriteAuctions") ?? [])
+    @Published var dateFilterType: DateFilterType  = .created
+    @Published var favoriteAuctionIds: Set<String> = Set(UserDefaults.standard.stringArray(forKey: "favoriteAuctions") ?? [])
 
     private let service = AuctionService.shared
-
+    
+    // MARK: - Enums
     /// Defines the types of date filters available for auction filtering
     enum DateFilterType: String, CaseIterable, Identifiable {
         case created = "Created Date"
-        case ended = "End Date"
+        case ended   = "End Date"
 
         var id: String { self.rawValue }
     }
     
+    // MARK: - Functions
     /// Fetches auctions from the API or cache
     func fetchAuctions(forceRefresh: Bool = false) async {
 
@@ -43,15 +45,16 @@ class AuctionViewModel: ObservableObject {
         }
 
         do {
-            let fetchedAuctions = try await service.fetchAuctions(forceRefresh: forceRefresh)
-            self.auctions = fetchedAuctions
+            let fetchedAuctions   = try await service.fetchAuctions(forceRefresh: forceRefresh)
+            self.auctions         = fetchedAuctions
             self.filteredAuctions = fetchedAuctions
-            self.isLoading = false
-            self.isRefreshing = false
+            self.isLoading        = false
+            self.isRefreshing     = false
+            
         } catch {
-            print("Fetch error: \(error)")
+            print("Fetching Auctions error (AuctionViewModel.swift): \(error)")
             self.errorMessage = error
-            self.isLoading = false
+            self.isLoading    = false
             self.isRefreshing = false
         }
     }
@@ -76,7 +79,9 @@ class AuctionViewModel: ObservableObject {
             }
 
             if let searchDate = searchDate {
+                
                 let dateString = dateFilterType == .created ? auction.createdAt : auction.auctionEnd
+                
                 if let date = Formatters.parseDate(dateString) {
                     let calendar = Calendar.current
                     matchesDate =
@@ -93,10 +98,10 @@ class AuctionViewModel: ObservableObject {
 
     /// Clears all search inputs and resets the filtered auctions to show all auctions.
     func clearSearchInput() {
-        searchText = ""
-        searchDate = nil
-        dateFilterType = .created
-        isSearching = false
+        searchText       = ""
+        searchDate       = nil
+        dateFilterType   = .created
+        isSearching      = false
         filteredAuctions = auctions
     }
 
@@ -110,7 +115,6 @@ class AuctionViewModel: ObservableObject {
 
     /// Toggles the favorite status of an auction.
     func toggleFavorite(_ auction: Auction) {
-
         if favoriteAuctionIds.contains("\(auction.id)") {
             favoriteAuctionIds.remove("\(auction.id)")
         } else {

@@ -6,6 +6,7 @@ import Foundation
 import Combine
 
 /// A service class responsible for fetching and managing auction data
+/// The cache expiration will happen after 5 minutes
 class AuctionService: ObservableObject {
     
     // MARK: - Properties
@@ -16,7 +17,7 @@ class AuctionService: ObservableObject {
     private let cacheExpirationInterval: TimeInterval = 300
     static let shared = AuctionService()
 
-    // MARK: - Methods
+    // MARK: - Functions
     
     /// Fetches a list of auctions from the API or returns cached data if available
     ///
@@ -24,23 +25,25 @@ class AuctionService: ObservableObject {
     /// - Returns: An array of `Auction` objects
     func fetchAuctions(forceRefresh: Bool = false) async throws -> [Auction] {
 
-        if !forceRefresh, !cachedAuctions.isEmpty, let lastFetch = lastFetchedTime,
-            Date().timeIntervalSince(lastFetch) < cacheExpirationInterval
-        {
+        if !forceRefresh,
+            !cachedAuctions.isEmpty,
+            let lastFetch = lastFetchedTime,
+            Date().timeIntervalSince(lastFetch) < cacheExpirationInterval {
+            
             return cachedAuctions
         }
 
-        let url = APIConstants.auctionGroupsURL()
-
+        let url       = APIConstants.auctionGroupsURL()
         let (data, _) = try await URLSession.shared.data(from: url)
 
         do {
-            let response = try JSONDecoder().decode(AuctionGroupsResponse.self, from: data)
-            self.cachedAuctions = response.data.auctions
-            self.lastFetchedTime = Date()
-            return response.data.auctions
+            let auctionsGroupsResponse = try JSONDecoder().decode(AuctionGroupsResponse.self, from: data)
+            self.cachedAuctions        = auctionsGroupsResponse.data.auctions
+            self.lastFetchedTime       = Date()
+            
+            return auctionsGroupsResponse.data.auctions
         } catch {
-            print("Decoding error: \(error)")
+            print("Decoding error from fetchAuctions function (AuctionService.swift): \(error)")
             throw error
         }
     }
@@ -52,14 +55,13 @@ class AuctionService: ObservableObject {
     func fetchAuctionById(auctionId: String) async throws -> Auction {
 
         if let cachedAuction = cachedAuctions.first(where: { $0.auctionId == auctionId }) {
-            print("Using cached auction data for ID: \(auctionId)")
             return cachedAuction
         }
 
         let url = APIConstants.auctionByIdURL(id: auctionId)
 
         let (data, _) = try await URLSession.shared.data(from: url)
-        let response = try JSONDecoder().decode(AuctionResponse.self, from: data)
+        let response  = try JSONDecoder().decode(AuctionResponse.self, from: data)
 
         guard let auction = response.data.first else {
             throw URLError(.badServerResponse)
@@ -71,6 +73,6 @@ class AuctionService: ObservableObject {
     /// Clears the cached auction data
     func clearCache() {
         cachedAuctions = []
-        lastFetchTime = nil
+        lastFetchedTime = nil
     }
 }

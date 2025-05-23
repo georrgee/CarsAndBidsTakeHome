@@ -10,9 +10,11 @@ import WebKit
 /// allowing the integration of WKWebView into SwiftUI's view hierarchy
 struct WebView: UIViewRepresentable {
     
+    // MARK: - Properties
     @Binding var isLoading: Bool
     let url: URL
-        
+    
+    // MARK: - Functions
     func makeUIView(context: Context) -> WKWebView {
         
         let configuration = WKWebViewConfiguration()

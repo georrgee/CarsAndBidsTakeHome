@@ -8,7 +8,6 @@ This is a SwiftUI application that displays car auctions from the Cars and Bids 
 
 ## Project Overview
 This iOS application allows users to browse car auctions and view the details of the auction. The app demonstrates modern iOS development practices including:
-
 - SwiftUI for UI implementation
 - MVVM architecture
 - Asynchronous image loading
@@ -47,9 +46,11 @@ The app fetches auction data from an API and processes it for display. It includ
 
 ## Running the project
 - Just build and run the application on the iOS simulator or a physical device
+- Note: On the simulator, it was weird that there was some networking issues, but on a real device (using my personal iPhone 16 pro),
+- I had no issues with fetching data on my device
 
 ## Future Improvements
-Given more time, I would consider adding:
+If had more time, I would consider adding:
 - Unit and UI tests
 - Improved error handling
 - Pagination for auction listings
