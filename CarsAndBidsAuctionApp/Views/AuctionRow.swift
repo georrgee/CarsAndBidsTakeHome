@@ -1,31 +1,31 @@
 //  AuctionItem.swift
 //  CarsAndBidsAuctionApp
-//  Created by George Garcia on 5/21/25.
+//  Created by George Garcia on 5/22/25
 
 import SwiftUI
 
 struct AuctionRow: View {
     
     let auction: Auction
+    let isFavorite: Bool
+    let toggleFavorite: () -> Void
     
     var isAuctionItemSold: Bool {
         auction.auctionStatus == "sold"
     }
     
     var body: some View {
-
-        NavigationLink(destination: AuctionDetailView(auction: auction)) {
-
+        ZStack {
+            NavigationLink(destination: AuctionDetailView(auction: auction)) {
+                EmptyView()
+            }
+            .opacity(0)
+            
             VStack(alignment: .leading, spacing: 8) {
-
                 ZStack(alignment: .bottomLeading) {
-
                     if let mainImage = auction.mainImage {
-
                         AsyncImage(url: URL(string: mainImage.formats.medium.url)) { phase in
-
                             switch phase {
-
                             case .empty:
                                 Rectangle()
                                     .fill(Color.gray.opacity(0.3))
@@ -33,12 +33,10 @@ struct AuctionRow: View {
                                         Image(systemName: "photo")
                                             .foregroundColor(.gray)
                                     )
-
                             case .success(let image):
                                 image
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
-
                             case .failure:
                                 Rectangle()
                                     .fill(Color.gray.opacity(0.3))
@@ -60,7 +58,7 @@ struct AuctionRow: View {
                             .aspectRatio(1.5, contentMode: .fit)
                             .cornerRadius(8)
                     }
-
+                    
                     if isAuctionItemSold {
                         HStack {
                             Text("Sold for $\(Formatters.formatPrice(auction.highBid))")
@@ -73,33 +71,37 @@ struct AuctionRow: View {
                         .cornerRadius(4)
                         .padding(15)
                     }
-
                 }
-
-                VStack(alignment: .leading, spacing: 4) {
-
-                    Text(auction.title)
-                        .font(.custom("Rubik-Medium", size: 16))
-                        .foregroundColor(.primary)
-
-                    Text(auction.subtitle)
-                        .font(.custom("Rubik-Regular", size: 14))
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)
-
-                    Text("Ended \(Formatters.formatDate(auction.auctionEnd))")
-                        .font(.custom("Rubik-Regular", size: 14))
-                        .foregroundColor(.gray)
-                        .padding(.top, 2)
+                
+                HStack(spacing: 5) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(auction.title)
+                            .font(.custom("Rubik-Medium", size: 16))
+                            .foregroundColor(.primary)
+                        Text(auction.subtitle)
+                            .font(.custom("Rubik-Regular", size: 14))
+                            .foregroundColor(.secondary)
+                            .lineLimit(2)
+                        Text("Ended \(Formatters.formatDate(auction.auctionEnd))")
+                            .font(.custom("Rubik-Regular", size: 14))
+                            .foregroundColor(.gray)
+                            .padding(.top, 2)
+                    }
+                    
+                    Spacer()
+                    
+                    Button(action: toggleFavorite) {
+                        Image(systemName: isFavorite ? "star.fill" : "star")
+                            .foregroundColor(.primary)
+                            .font(.system(size: 22))
+                    }
+                    .padding()
                 }
             }
-            .background(Color(UIColor.systemBackground))
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .buttonStyle(PlainButtonStyle())
             .contentShape(Rectangle())
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
 }
 
@@ -146,7 +148,7 @@ struct AuctionRow_Previews: PreviewProvider {
                                 width: 234,
                                 height: 156
                             )
-                        ))))
+                        ))), isFavorite: false, toggleFavorite: { print("Favorited Toggled in preview") } )
         .previewLayout(.sizeThatFits)
         .padding()
         .background(Color(.systemBackground))

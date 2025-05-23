@@ -15,6 +15,7 @@ struct AuctionDetailView: View {
   var body: some View {
 
     ZStack {
+        
       if isLoading {
         ProgressView()
           .progressViewStyle(CircularProgressViewStyle())
@@ -33,5 +34,6 @@ struct AuctionDetailView: View {
       }
     }
     .modifier(NavigationBarModifier(tintColor: .black))
+    .tint(.black)
   }
 }

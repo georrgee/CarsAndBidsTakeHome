@@ -1,6 +1,6 @@
 //  CarsAndBidsAuctionAppApp.swift
 //  CarsAndBidsAuctionApp
-//  Created by George Garcia on 5/21/25.
+//  Created by George Garcia on 5/22/25.
 
 import SwiftUI
 
@@ -8,7 +8,7 @@ import SwiftUI
 struct CarsAndBidsAuctionAppApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AuctionListView()
                 .environmentObject(AuctionService.shared)
         }
     }

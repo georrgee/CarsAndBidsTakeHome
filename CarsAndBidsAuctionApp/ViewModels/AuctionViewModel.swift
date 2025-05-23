@@ -1,6 +1,6 @@
 //  AuctionViewModel.swift
 //  CarsAndBidsAuctionApp
-//  Created by George Garcia on 5/21/25.
+//  Created by George Garcia on 5/22/25
 
 import Foundation
 
@@ -9,16 +9,17 @@ class AuctionViewModel: ObservableObject {
     
     @Published var auctions: [Auction]         = []
     @Published var filteredAuctions: [Auction] = []
-
     @Published var isLoading: Bool    = false
     @Published var searchText: String = ""
     @Published var isSearching: Bool  = false
     @Published var isRefreshing: Bool = false
-
-    
     @Published var errorMessage: Error?
     @Published var searchDate: Date?
     @Published var dateFilterType: DateFilterType = .created
+    @Published var favoriteAuctionIds: Set<String> = Set(
+        UserDefaults.standard.stringArray(forKey: "favoriteAuctions") ?? [])
+
+    private let service = AuctionService.shared
 
     enum DateFilterType: String, CaseIterable, Identifiable {
         case created = "Created Date"
@@ -26,8 +27,6 @@ class AuctionViewModel: ObservableObject {
 
         var id: String { self.rawValue }
     }
-
-    private let service = AuctionService.shared
     
     func fetchAuctions(forceRefresh: Bool = false) async {
 
@@ -91,5 +90,20 @@ class AuctionViewModel: ObservableObject {
         dateFilterType = .created
         isSearching = false
         filteredAuctions = auctions
+    }
+
+    func isFavorite(_ auction: Auction) -> Bool {
+        return favoriteAuctionIds.contains("\(auction.id)")
+    }
+
+    func toggleFavorite(_ auction: Auction) {
+
+        if favoriteAuctionIds.contains("\(auction.id)") {
+            favoriteAuctionIds.remove("\(auction.id)")
+        } else {
+            favoriteAuctionIds.insert("\(auction.id)")
+        }
+        
+        UserDefaults.standard.set(Array(favoriteAuctionIds), forKey: "favoriteAuctions")
     }
 }

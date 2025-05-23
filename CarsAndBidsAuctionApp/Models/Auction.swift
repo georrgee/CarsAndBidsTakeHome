@@ -1,7 +1,8 @@
 //  Auction.swift
 //  CarsAndBidsAuctionApp
-//  Created by George Garcia on 5/21/25.
+//  Created by George Garcia on 5/22/25
 
+/// The model representing an auction item from Cars & Bids
 struct Auction: Codable, Identifiable {
     
     let id:            Int
@@ -52,7 +53,6 @@ struct ImageFormats: Codable {
     let medium:    ImageFormat
     let thumbnail: ImageFormat
 }
-
 struct ImageFormat: Codable {
     let url:    String
     let width:  Int

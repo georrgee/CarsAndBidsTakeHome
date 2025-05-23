@@ -1,11 +1,11 @@
 //  ContentView.swift
 //  CarsAndBidsAuctionApp
-//  Created by George Garcia on 5/21/25
+//  Created by George Garcia on 5/22/25
 
 import SwiftUI
 import Foundation
 
-struct ContentView: View {
+struct AuctionListView: View {
 
     @StateObject private var auctionViewModel = AuctionViewModel()
     @State private var showDatePicker         = false
@@ -180,13 +180,19 @@ struct ContentView: View {
                     else {
                         List {
                             ForEach(auctionViewModel.filteredAuctions) { auction in
-                                AuctionRow(auction: auction)
-                                    .listRowInsets(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-                                    .listRowSeparator(.hidden)
+                                AuctionRow(
+                                    auction: auction,
+                                    isFavorite: auctionViewModel.isFavorite(auction),
+                                    toggleFavorite: { auctionViewModel.toggleFavorite(auction) }
+                                )
+                                .listRowInsets(
+                                    EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
+                                )
+                                .listRowSeparator(.hidden)
                             }
                         }
                         .listStyle(PlainListStyle())
-                        .refreshable { 
+                        .refreshable {
                             await auctionViewModel.fetchAuctions(forceRefresh: true)
                         }
                     }
@@ -204,5 +210,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    AuctionListView()
 }

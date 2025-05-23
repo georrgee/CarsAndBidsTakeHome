@@ -1,22 +1,27 @@
 //  AuctionService.swift
 //  CarsAndBidsAuctionApp
-//  Created by George Garcia on 5/21/25.
+//  Created by George Garcia on 5/22/25
 
 import Foundation
 import Combine
 
+/// A service class responsible for fetching and managing auction data
 class AuctionService: ObservableObject {
     
-    // MARK: - State Variables
+    // MARK: - Properties
     @Published var auctions: [Auction] = []
     
-    // MARK: - Variables
     private var cachedAuctions: [Auction] = []
     private var lastFetchTime: Date?
     private let cacheExpirationInterval: TimeInterval = 300  
     static let shared = AuctionService()
 
     // MARK: - Methods
+    
+    /// Fetches a list of auctions from the API or returns cached data if available
+    ///
+    /// - Parameter forceRefresh: If set to `true`, ignores the cache and forces a network request
+    /// - Returns: An array of `Auction` objects
     func fetchAuctions(forceRefresh: Bool = false) async throws -> [Auction] {
 
         if !forceRefresh, !cachedAuctions.isEmpty, let lastFetch = lastFetchTime,
@@ -40,6 +45,10 @@ class AuctionService: ObservableObject {
         }
     }
     
+    /// Fetches a specific auction by its ID
+    ///
+    /// - Parameter auctionId: The unique identifier of the auction to fetch
+    /// - Returns: The requested `Auction` object
     func fetchAuctionById(auctionId: String) async throws -> Auction {
 
         if let cachedAuction = cachedAuctions.first(where: { $0.auctionId == auctionId }) {
@@ -59,7 +68,7 @@ class AuctionService: ObservableObject {
         return auction
     }
 
-    /** @description: clears the cache */
+    /// Clears the cached auction data
     func clearCache() {
         cachedAuctions = []
         lastFetchTime = nil
