@@ -4,6 +4,9 @@
 
 import SwiftUI
 
+/// A view that represents a single auction item in a list
+/// It also serves as a navigation link to the detailed auction view
+
 struct AuctionRow: View {
     
     let auction: Auction

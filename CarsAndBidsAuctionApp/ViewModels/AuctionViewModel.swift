@@ -4,23 +4,28 @@
 
 import Foundation
 
+/// A view model that manages auction data and user interactions for auction listings
 @MainActor
 class AuctionViewModel: ObservableObject {
     
     @Published var auctions: [Auction]         = []
     @Published var filteredAuctions: [Auction] = []
+    
     @Published var isLoading: Bool    = false
     @Published var searchText: String = ""
     @Published var isSearching: Bool  = false
     @Published var isRefreshing: Bool = false
+    
     @Published var errorMessage: Error?
     @Published var searchDate: Date?
+    
     @Published var dateFilterType: DateFilterType = .created
     @Published var favoriteAuctionIds: Set<String> = Set(
         UserDefaults.standard.stringArray(forKey: "favoriteAuctions") ?? [])
 
     private let service = AuctionService.shared
 
+    /// Defines the types of date filters available for auction filtering
     enum DateFilterType: String, CaseIterable, Identifiable {
         case created = "Created Date"
         case ended = "End Date"
@@ -28,6 +33,7 @@ class AuctionViewModel: ObservableObject {
         var id: String { self.rawValue }
     }
     
+    /// Fetches auctions from the API or cache
     func fetchAuctions(forceRefresh: Bool = false) async {
 
         if forceRefresh {
@@ -50,6 +56,7 @@ class AuctionViewModel: ObservableObject {
         }
     }
 
+    /// Filters auctions based on the current search text and date filter
     func filterAuctions() {
 
         isSearching = !searchText.isEmpty || searchDate != nil
@@ -84,6 +91,7 @@ class AuctionViewModel: ObservableObject {
         }
     }
 
+    /// Clears all search inputs and resets the filtered auctions to show all auctions.
     func clearSearchInput() {
         searchText = ""
         searchDate = nil
@@ -92,10 +100,15 @@ class AuctionViewModel: ObservableObject {
         filteredAuctions = auctions
     }
 
+    /// Checks if an auction is marked as a favorite
+    ///
+    /// - Parameter auction: The auction to check.
+    /// - Returns: `true` if the auction is a favorite, `false` otherwise
     func isFavorite(_ auction: Auction) -> Bool {
         return favoriteAuctionIds.contains("\(auction.id)")
     }
 
+    /// Toggles the favorite status of an auction.
     func toggleFavorite(_ auction: Auction) {
 
         if favoriteAuctionIds.contains("\(auction.id)") {

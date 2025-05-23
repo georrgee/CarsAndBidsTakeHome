@@ -5,6 +5,8 @@
 import SwiftUI
 import Foundation
 
+/// A view that displays a list of auctions with search and filtering capabilities.
+/// This view serves as the main screen of the application, showing a list of auctions
 struct AuctionListView: View {
 
     @StateObject private var auctionViewModel = AuctionViewModel()

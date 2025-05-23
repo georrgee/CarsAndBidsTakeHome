@@ -5,6 +5,9 @@
 import SwiftUI
 import WebKit
 
+/// A SwiftUI wrapper for WKWebView that displays web content within the app
+// This view conforms to `UIViewRepresentable` to bridge between SwiftUI and UIKit,
+/// allowing the integration of WKWebView into SwiftUI's view hierarchy
 struct WebView: UIViewRepresentable {
     
     @Binding var isLoading: Bool
@@ -58,13 +61,10 @@ struct WebView: UIViewRepresentable {
         
         func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
             parent.isLoading = false
-            print("WebView navigation failed: \(error.localizedDescription)")
-            // You might want to add error handling here, e.g., show an alert
         }
         
         func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
             parent.isLoading = false
-            print("WebView navigation failed: \(error.localizedDescription)")
         }
     }
 }

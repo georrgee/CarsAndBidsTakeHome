@@ -3,6 +3,8 @@
 //  Created by George Garcia on 5/22/25.
 
 import SwiftUI
+
+/// This view presents the auction details by loading the auction's web page in a webview
 struct AuctionDetailView: View {
 
   @State private var isLoading = true

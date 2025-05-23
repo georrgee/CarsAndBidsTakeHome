@@ -12,8 +12,8 @@ class AuctionService: ObservableObject {
     @Published var auctions: [Auction] = []
     
     private var cachedAuctions: [Auction] = []
-    private var lastFetchTime: Date?
-    private let cacheExpirationInterval: TimeInterval = 300  
+    private var lastFetchedTime: Date?
+    private let cacheExpirationInterval: TimeInterval = 300
     static let shared = AuctionService()
 
     // MARK: - Methods
@@ -24,7 +24,7 @@ class AuctionService: ObservableObject {
     /// - Returns: An array of `Auction` objects
     func fetchAuctions(forceRefresh: Bool = false) async throws -> [Auction] {
 
-        if !forceRefresh, !cachedAuctions.isEmpty, let lastFetch = lastFetchTime,
+        if !forceRefresh, !cachedAuctions.isEmpty, let lastFetch = lastFetchedTime,
             Date().timeIntervalSince(lastFetch) < cacheExpirationInterval
         {
             return cachedAuctions
@@ -37,7 +37,7 @@ class AuctionService: ObservableObject {
         do {
             let response = try JSONDecoder().decode(AuctionGroupsResponse.self, from: data)
             self.cachedAuctions = response.data.auctions
-            self.lastFetchTime = Date()
+            self.lastFetchedTime = Date()
             return response.data.auctions
         } catch {
             print("Decoding error: \(error)")
